@@ -2,7 +2,13 @@ from game import engine
 
 g = engine()
 
+print(g.__STATE__)
+
+movemap = {'w':'n', 'a':'w', 's':'s', 'd':'e'}
 while g.__GAME_ACTIVE__:
-    print(g.__STATE__)
     move = input("> ")
-    g.move(move)
+    if move not in movemap:
+        print("invalid move")
+        continue
+    g.move(movemap[move])
+    print(g.__STATE__)

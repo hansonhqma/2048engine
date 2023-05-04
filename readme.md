@@ -25,3 +25,5 @@ instance.score()
 # reset game
 instance.reset()
 ```
+
+Alternatively play in the command line with `play.py` using WASD keys
