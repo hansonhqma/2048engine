@@ -24,6 +24,9 @@ instance.score()
 
 # reset game
 instance.reset()
+
+# you can also view the board by printing the game object
+print(instance)
 ```
 
 Alternatively play in the command line with `play.py` using WASD keys

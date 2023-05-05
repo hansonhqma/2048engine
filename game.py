@@ -6,19 +6,44 @@ class engine:
     def __init__(self, _size=4):
 
         self.__SIZE_CONST__ = _size
-        self.__STATE__ = np.zeros((self.__SIZE_CONST__, self.__SIZE_CONST__)).astype(np.uint8)
+        self.__STATE__ = np.zeros((self.__SIZE_CONST__, self.__SIZE_CONST__)).astype(np.int32)
         self.__SCORE__ = 0
         self.__GAME_ACTIVE__ = True
 
         # insert two random tiles
         self.__insertrandomtile__()
         self.__insertrandomtile__()
+
+    def move(self, direction):
+        # check move validity
+        dir = direction.lower()
+        assert dir in ('n', 'e', 's', 'w')
+
+        if dir == 'n' or dir == 's':
+            self.__STATE__ = self.__STATE__.transpose()
+
+        left_move = dir == 'w' or dir == 'n'
+        
+        self.__stack__(left_move)
+        self.__compress__(left_move)
+        self.__stack__(left_move)
+
+        if dir == 'n' or dir == 's':
+            self.__STATE__ = self.__STATE__.transpose()
+
+        self.__insertrandomtile__()
+
+        if np.count_nonzero(self.__STATE__ == 0) == 0:
+            self.__GAME_ACTIVE__ = False
     
+    def score(self):
+        return self.__SCORE__
+
     def reset(self):
         self.__init__(_size=self.__SIZE_CONST__)
 
-    def score(self):
-        return self.__SCORE__
+    def __str__(self):
+        return self.__STATE__.__str__()
     
     def __insertrandomtile__(self):
         if np.count_nonzero(self.__STATE__ == 0) > 0:
@@ -67,22 +92,3 @@ class engine:
                         self.__STATE__[row, col-1] = 0
                     self.__SCORE__ += new_value
 
-    def move(self, direction):
-        # check move validity
-        dir = direction.lower()
-        assert dir in ('n', 'e', 's', 'w')
-
-        if dir == 'n' or dir == 's':
-            self.__STATE__ = self.__STATE__.transpose()
-        
-        self.__stack__(left=dir=='w' or dir=='n')
-        self.__compress__(left=dir=='w' or dir=='n')
-        self.__stack__(left=dir=='w' or dir=='n')
-
-        if dir == 'n' or dir == 's':
-            self.__STATE__ = self.__STATE__.transpose()
-
-        self.__insertrandomtile__()
-
-        if np.count_nonzero(self.__STATE__ == 0) == 0:
-            self.__GAME_ACTIVE__ = False
