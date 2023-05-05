@@ -17,16 +17,15 @@ class engine:
     def move(self, direction):
         # check move validity
         dir = direction.lower()
-        assert dir in ('n', 'e', 's', 'w')
 
         if dir == 'n' or dir == 's':
             self.__STATE__ = self.__STATE__.transpose()
 
         left_move = dir == 'w' or dir == 'n'
         
-        self.__stack__(left_move)
-        self.__compress__(left_move)
-        self.__stack__(left_move)
+        self.__stack__(left=left_move)
+        self.__compress__(left=left_move)
+        self.__stack__(left=left_move)
 
         if dir == 'n' or dir == 's':
             self.__STATE__ = self.__STATE__.transpose()
@@ -41,6 +40,18 @@ class engine:
 
     def reset(self):
         self.__init__(_size=self.__SIZE_CONST__)
+
+    def replicate(self):
+        """
+        return copy of game instance
+        """
+        
+        copy = engine(_size = self.__SIZE_CONST__)
+        copy.__STATE__ = self.__STATE__.copy()
+        copy.__SCORE__ = self.__SCORE__
+        copy.__GAME_ACTIVE__ = self.__GAME_ACTIVE__
+
+        return copy
 
     def __str__(self):
         return self.__STATE__.__str__()
@@ -63,8 +74,8 @@ class engine:
     
     def __stack__(self, left=True):
         for row in range(self.__SIZE_CONST__):
-            if np.count_nonzero(self.__STATE__[row] == 0) == 0:
-                return
+            if np.count_nonzero(self.__STATE__[row]) == self.__SIZE_CONST__:
+                continue
 
             replacement_pos = 0 if left else self.__SIZE_CONST__-1
             start, stop, step = (0, self.__SIZE_CONST__, 1) if left else (self.__SIZE_CONST__-1, -1, -1)
